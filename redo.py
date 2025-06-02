@@ -33,7 +33,10 @@ def redo():
                         (nome, saldo, id_cliente))
     conn.commit()
 
-    ## printar as mucanças feitas
+    print("\nEstado final da tabela clientes_em_memoria:")
+    cur.execute("SELECT * FROM clientes_em_memoria ORDER BY id")
+    for row in cur.fetchall():
+        print(f"ID: {row[0]} | Nome: {row[1]} | Saldo: {row[2]}")
 
     cur.close()
     conn.close()
