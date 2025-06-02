@@ -14,7 +14,7 @@ CREATE TABLE log_operacoes (
   status TEXT  -- pode ser COMMIT ou PENDING
 );
 
--- trigger rpa registrar na tabela de log sempre que ocorrer transação na tabela clientes_em_memoria
+-- trigger para registrar na tabela de log sempre que ocorrer transação na tabela clientes_em_memoria
 CREATE OR REPLACE FUNCTION log_trigger_func() RETURNS trigger AS $$
 BEGIN
   IF (TG_OP = 'INSERT') THEN
