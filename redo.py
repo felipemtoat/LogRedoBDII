@@ -17,7 +17,23 @@ def redo():
     conn = conectar()
     cur = conn.cursor()
 
-    #Esqueleto da redo: implementar lógica de processamento de logs aqui
+    cur.execute("SELECT * FROM log_operacoes WHERE status = 'COMMIT' ORDER BY commit_id, id")
+    logs = cur.fetchall()
+
+    print("Aplicando REDO nas transações com COMMIT:\n")
+    for log in logs:
+        _, commit_id, operacao, id_cliente, nome, saldo, _ = log
+        print(f"{commit_id} | {operacao} | ID: {id_cliente} | Nome: {nome} | Saldo: {saldo}")
+
+        if operacao == 'INSERT':
+            cur.execute("INSERT INTO clientes_em_memoria (id, nome, saldo) VALUES (%s, %s, %s) ON CONFLICT (id) DO NOTHING",
+                        (id_cliente, nome, saldo))
+        elif operacao == 'UPDATE':
+            cur.execute("UPDATE clientes_em_memoria SET nome = %s, saldo = %s WHERE id = %s",
+                        (nome, saldo, id_cliente))
+    conn.commit()
+
+    ## printar as mucanças feitas
 
     cur.close()
     conn.close()
