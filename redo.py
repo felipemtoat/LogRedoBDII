@@ -12,3 +12,15 @@ def conectar():
         host=os.getenv("DB_HOST"),
         port=os.getenv("DB_PORT")
     )
+    
+def redo():
+    conn = conectar()
+    cur = conn.cursor()
+
+    #Esqueleto da redo: implementar lógica de processamento de logs aqui
+
+    cur.close()
+    conn.close()
+
+if _name_ == '_main_':
+    redo()
