@@ -14,7 +14,23 @@ CREATE TABLE log_operacoes (
   status TEXT  -- pode ser COMMIT ou PENDING
 );
 
--- fazer trigger para inserir na tabela de log aqui!!
+-- trigger rpa registrar na tabela de log sempre que ocorrer transação na tabela clientes_em_memoria
+CREATE OR REPLACE FUNCTION log_trigger_func() RETURNS trigger AS $$
+BEGIN
+  IF (TG_OP = 'INSERT') THEN
+    INSERT INTO log_operacoes (commit_id, operacao, id_cliente, nome, saldo, status)
+    VALUES ('TRIGGER', 'INSERT', NEW.id, NEW.nome, NEW.saldo, 'COMMIT');
+  ELSIF (TG_OP = 'UPDATE') THEN
+    INSERT INTO log_operacoes (commit_id, operacao, id_cliente, nome, saldo, status)
+    VALUES ('TRIGGER', 'UPDATE', NEW.id, NEW.nome, NEW.saldo, 'COMMIT');
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_log_clientes
+AFTER INSERT OR UPDATE ON clientes_em_memoria
+FOR EACH ROW EXECUTE FUNCTION log_trigger_func();
 
 -- teste de transação
 BEGIN;
