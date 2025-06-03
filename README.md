@@ -24,11 +24,11 @@ git clone https://github.com/seu-usuario/LogRedoBDII.git
 ### Passo 2: Instale as dependências do `redo.py`
 Certifique-se de ter o Python instalado. Em seguida, instale as dependências necessárias executando:
 ```bash
-pip install psycopg2
+pip install psycopg2 python-dotenv
 ```
 
 ### Passo 3: Configure o banco de dados
-1. Execute o script SQL para criar a tabela de log e configurar o banco de dados:
+Execute o script SQL para criar a tabela de log e configurar o banco de dados:
    ```bash
    psql -U seu_usuario -d seu_banco -f script.sql
    ```
@@ -39,8 +39,14 @@ Para simular uma falha no banco de dados, derrube o processo do PostgreSQL:
 sudo kill -9 $(pgrep postgres)
 ```
 
-### Passo 5: Execute o mecanismo REDO
-Após a falha, execute o script `redo.py` para recuperar os dados perdidos:
+### Passo 5: Reinicie o serviço do PostgreSQL
+Após simular a falha, reinicie o serviço do PostgreSQL antes de executar o mecanismo REDO:
+```bash
+sudo service postgresql start
+```
+
+### Passo 6: Execute o mecanismo REDO
+Após reiniciar o serviço, execute o script `redo.py` para recuperar os dados perdidos:
 ```bash
 python redo.py
 ```
